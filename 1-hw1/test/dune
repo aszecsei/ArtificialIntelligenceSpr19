@@ -1,0 +1,3 @@
+(test
+  (name hw1_test)
+  (libraries hw1 ounit))
