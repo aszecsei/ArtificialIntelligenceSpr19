@@ -442,7 +442,7 @@ let misplacedTiles gs cs =
    misplacedTiles goalState startState
 *)
 
-(*
+
 (* Search procedure *)
 
 (* nodes in the search space are encoded as records of this type *)
@@ -460,7 +460,7 @@ type node = {
 let rec isInPath s n =
   match n with
   | None -> false
-  | Some {state = s'; parent = n'} -> s = s' || isInPath s n'
+  | Some {state = s'; parent = n'; _} -> s = s' || isInPath s n'
 
 (* 'expand' takes a heuristic function 'f' and a node 'n',
    generates all the successors of 'n' in the search tree,
@@ -474,7 +474,7 @@ let expand f n =
     match l1 with
     | [] -> l2
     | (None, _) :: t -> exp t l2
-    | (Some s, a) :: t when isInPath s (Some n) -> exp t l2
+    | (Some s, _a) :: t when isInPath s (Some n) -> exp t l2
     | (Some s, a) :: t -> 
       let ns = {state = s; depth = n.depth + 1; cost = n.cost +. actionCost a n.state;
                 parent = Some n; action = Some a} in
@@ -489,8 +489,8 @@ let expand f n =
 let extractPlan n = 
   let rec ep n l = 
     match n with 
-    | {parent = None} -> l
-    | {parent = Some n; action = Some a} -> ep n (a :: l)  
+    | {parent = None; _} -> l
+    | {parent = Some n; action = Some a; _} -> ep n (a :: l)  
     | _ -> failwith "Ill-formed state"
   in
   ep n []
@@ -505,7 +505,7 @@ let treeSearch initState f isGoal =
     if PQueue.isEmpty fringe then 
       failwith "Search failed"
     else
-      let (p, n, fringe1) = PQueue.extract fringe in
+      let (_p, n, fringe1) = PQueue.extract fringe in
       if isGoal n then
         n
       else
@@ -531,14 +531,27 @@ let isMyGoal n = n.state = goalState
    You may find the predefined conversion function 'float_of_int' useful.
 *)
 let greedyBF n = 
-  0.0 (* replace with your implementation *)
+  float_of_int (misplacedTiles n.state goalState)
 
-(* 'greedyBF' takes a node 'n' and returns the value of 'n'
+(* {actions =
+    [Down; Right; Up; Up; Left; Right; Left; Down; Up; Right; Down; Down;
+     Left; Left; Right; Right; Left; Up; Up; Right; Down; Left; Down; Right;
+     Up; Down; Left; Left; Right; Right; Left; Left; Up; Down; Right; Right;
+     Left; Up; Down; Right; Up; Down; Left; Left; Right; Right]}
+*)
+
+(* 'aStar' takes a node 'n' and returns the value of 'n'
    according to the A* first heuristics where
    h(n) is the the number of misplaced tiles.
 *)
+(*
+{actions =
+    [Up; Right; Down; Left; Left; Right; Down; Up; Right; Left; Down; Left;
+     Right; Right; Up; Down; Left; Left; Right; Right]}
+*)
 let aStar n = 
-  0.0 (* replace with your implementation *)
+  (float_of_int (misplacedTiles n.state goalState)) +. n.cost
+;;
 
 
 (* test code
@@ -560,4 +573,46 @@ let aStar n =
 (*-------------
    Problem A.5
   -------------*)
+let manhattanDist gs cs =
+  let m = "input states have different sizes" in
+  let _ = require (gs.board.size = cs.board.size) "misplacedTiles" m in
+  let manhattan (r1,c1) (r2,c2) =
+    (abs (r1-r2)) + (abs (c1-c2)) in
+  let findPos v b =
+    let rec findPosHelper v b currentPos =
+      match (PosMap.find_opt currentPos b.tiles) with
+      | Some(value) when value = v -> currentPos
+      | _ -> match currentPos with
+        | (1,1) -> failwith "Tile not found"
+        | (r,1) -> (findPosHelper v b (r-1,b.size))
+        | (r,c) -> (findPosHelper v b (r,c-1)) in
+    findPosHelper v b (b.size, b.size) in
+  let rec sumManhattan gs cs currentPos agg =
+    let goalTile = PosMap.find_opt currentPos gs.board.tiles in
+    let newAgg = match goalTile with
+      | None -> agg
+      | Some(tile) -> agg + manhattan currentPos (findPos tile cs.board) in
+    match currentPos with
+    | (1,1) -> newAgg
+    | (r,1) -> sumManhattan gs cs (r-1,gs.board.size) newAgg
+    | (r,c) -> sumManhattan gs cs (r,c-1) newAgg
+  in
+  sumManhattan gs cs (gs.board.size,gs.board.size) 0
+;;
+
+let greedyBFM n = 
+  float_of_int (manhattanDist n.state goalState)
+
+(*
+  [Up; Right; Down; Left; Down; Right; Up; Down; Left; Left; Right; Right;
+   Left; Left; Up; Down; Right; Right; Left; Up; Down; Right; Up; Down; Left;
+   Left; Right; Right]
+*)
+
+let aStarM n = 
+  (float_of_int (manhattanDist n.state goalState)) +. n.cost
+
+(*
+  [Up; Right; Down; Left; Left; Right; Down; Right; Up; Down; Left; Left;
+ Right; Right]
 *)

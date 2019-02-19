@@ -28,17 +28,43 @@ let suite =
       );
 
     "plan" >:: (fun () ->
-        let result = execute myPlan startState in
-        assert_equal goalState.emptyPos result.emptyPos
+        assert_equal (execute myPlan startState) goalState
       );
 
     "sumMisplaced 0" >:: (fun () ->
-        let result = execute myPlan startState in
-        assert_equal (misplacedTiles goalState result) 0
+        assert_equal (misplacedTiles goalState (execute myPlan startState)) 0
       );
 
     "sumMisplaced 5" >:: (fun () ->
         assert_equal (misplacedTiles goalState startState) 5
+      );
+
+    "heuristics" >:: (fun () ->
+        let n1 = treeSearch startState greedyBF isMyGoal in
+        let p1 = { actions = extractPlan n1 } in
+
+        (* printState (execute p1 startState); *)
+
+        let n2 = treeSearch startState aStar isMyGoal in
+        let p2 = { actions = extractPlan n2 } in
+        (* printState (execute p2 startState); *)
+
+        assert_equal (execute p2 startState) (execute p1 startState);
+        assert_equal (execute p2 startState) goalState;
+      );
+
+    "manhattan" >:: (fun () ->
+        let n1 = treeSearch startState greedyBFM isMyGoal in
+        let p1 = { actions = extractPlan n1 } in
+
+        (* printState (execute p1 startState); *)
+
+        let n2 = treeSearch startState aStarM isMyGoal in
+        let p2 = { actions = extractPlan n2 } in
+        (* printState (execute p2 startState); *)
+
+        assert_equal (execute p2 startState) (execute p1 startState);
+        assert_equal (execute p2 startState) goalState;
       );
   ]
 
