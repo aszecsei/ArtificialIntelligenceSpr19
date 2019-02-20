@@ -4,7 +4,7 @@
 
     Homework 2 -- Part A
 
-    Name: <your name here>
+    Name: Alic Szecsei
   ==================================================*)
 
 (*-------
