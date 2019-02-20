@@ -28,7 +28,7 @@ let suite =
       );
 
     "plan" >:: (fun () ->
-        assert_equal (execute myPlan startState) goalState
+        assert_equal (string_of_state (execute myPlan startState)) (string_of_state goalState)
       );
 
     "sumMisplaced 0" >:: (fun () ->

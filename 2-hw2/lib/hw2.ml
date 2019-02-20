@@ -460,7 +460,7 @@ type node = {
 let rec isInPath s n =
   match n with
   | None -> false
-  | Some {state = s'; parent = n'} -> 
+  | Some {state = s'; parent = n'; _} -> 
     (string_of_board s.board = string_of_board s'.board) || isInPath s n'
 
 (* 'expand' takes a heuristic function 'f' and a node 'n',
