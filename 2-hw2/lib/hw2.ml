@@ -531,24 +531,42 @@ let isMyGoal n = (string_of_board n.state.board = string_of_board goalState.boar
 
    You may find the predefined conversion function 'float_of_int' useful.
 *)
+(*
+    [Down; Right; Up; Up; Left; Left; Down; Right; Right; Up; Left; Down; Left;
+ Up; Right; Down; Left; Up; Right; Right; Down; Left; Left; Up; Right; Down;
+ Left; Up; Right; Right; Down; Down; Left; Left; Up; Up; Right; Right; Down;
+ Down; Left; Left; Up; Up; Right; Right; Down; Down; Left; Left; Up; Up;
+ Right; Right; Down; Down; Left; Left; Up; Up; Right; Right; Down; Down;
+ Left; Left; Up; Up; Right; Right; Down; Down; Left; Left; Up; Up; Right;
+ Right; Down; Down; Left; Up; Left; Down; Right; Right; Up; Up; Left; Down;
+ Left; Down; Right; Up; Left; Down; Right; Right; Up; Up; Left; Left; Down;
+ Down; Right; Right; Up; Up; Left; Left; Down; Down; Right; Right; Up; Up;
+ Left; Left; Down; Down; Right; Right; Up; Left; Left; Up; Right; Down;
+ Right; Down; Left; Left; Up; Up; Right; Right; Down; Down; Left; Left; Up;
+ Up; Right; Right; Down; Down; Left; Left; Up; Up; Right; Right; Down; Down;
+ Left; Left; Up; Right; Right; Up; Left; Down; Left; Down; Right; Right; Up;
+ Up; Left; Left; Down; Down; Right; Right; Up; Up; Left; Left; Down; Down;
+ Right; Right; Up; Up; Left; Left; Down; Down; Right; Right; Up; Left; Left;
+ Up; Right; Down; Right; Down; Left; Left; Up; Up; Right; Right; Down; Down;
+ Left; Left; Up; Up; Right; Right; Down; Down; Left; Left; Up; Up; Right;
+ Right; Down; Down; Left; Left; Up; Right; Right; Down; Left; Up; Left; Down;
+ Right; Right; Up; Up; Left; Left; Down; Down; Right; Right; Up; Up; Left;
+ Left; Down; Down; Right; Right; Up; Up; Left; Left; Down; Down; Right;
+ Right; Up; Left; Left; Up; Right; Right; Down; Left; Left; Up; Right; Down;
+ Left; Up; Right; Right; Down; Left; Up; Left; Down; Right; Right; Up; Left;
+ Left; Down; Right; Up; Right; Down; Left; Left; Up; Right; Right; Down;
+ Left; Left; Up; Right; ...]
+*)
 let greedyBF n = 
   float_of_int (misplacedTiles n.state goalState)
 
-(* {actions =
-    [Down; Right; Up; Up; Left; Right; Left; Down; Up; Right; Down; Down;
-     Left; Left; Right; Right; Left; Up; Up; Right; Down; Left; Down; Right;
-     Up; Down; Left; Left; Right; Right; Left; Left; Up; Down; Right; Right;
-     Left; Up; Down; Right; Up; Down; Left; Left; Right; Right]}
-*)
 
 (* 'aStar' takes a node 'n' and returns the value of 'n'
    according to the A* first heuristics where
    h(n) is the the number of misplaced tiles.
 *)
 (*
-{actions =
-    [Up; Right; Down; Left; Left; Right; Down; Up; Right; Left; Down; Left;
-     Right; Right; Up; Down; Left; Left; Right; Right]}
+  [Up; Right; Down; Left; Down; Right]
 *)
 let aStar n = 
   (float_of_int (misplacedTiles n.state goalState)) +. n.cost
@@ -601,19 +619,16 @@ let manhattanDist gs cs =
   sumManhattan gs cs (gs.board.size,gs.board.size) 0
 ;;
 
+(*
+  [Up; Right; Down; Left; Down; Right]
+*)
 let greedyBFM n = 
   float_of_int (manhattanDist n.state goalState)
 
-(*
-  [Up; Right; Down; Left; Down; Right; Up; Down; Left; Left; Right; Right;
-   Left; Left; Up; Down; Right; Right; Left; Up; Down; Right; Up; Down; Left;
-   Left; Right; Right]
-*)
 
+(*
+  [Up; Right; Down; Left; Down; Right]
+*)
 let aStarM n = 
   (float_of_int (manhattanDist n.state goalState)) +. n.cost
 
-(*
-  [Up; Right; Down; Left; Left; Right; Down; Right; Up; Down; Left; Left;
- Right; Right]
-*)
