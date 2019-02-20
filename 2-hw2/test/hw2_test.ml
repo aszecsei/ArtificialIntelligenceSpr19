@@ -24,7 +24,7 @@ let suite =
           | Some(state) -> state
           | None -> assert_failure "Application was thought to be invalid" in
 
-        assert_equal state { emptyPos = (3,2); board = b2}
+        assert_equal (string_of_state state) (string_of_state { emptyPos = (3,2); board = b2})
       );
 
     "plan" >:: (fun () ->
@@ -49,8 +49,8 @@ let suite =
         let p2 = { actions = extractPlan n2 } in
         (* printState (execute p2 startState); *)
 
-        assert_equal (execute p2 startState) (execute p1 startState);
-        assert_equal (execute p2 startState) goalState;
+        assert_equal (string_of_state (execute p2 startState)) (string_of_state (execute p1 startState));
+        assert_equal (string_of_state (execute p2 startState)) (string_of_state goalState);
       );
 
     "manhattan" >:: (fun () ->
@@ -63,8 +63,8 @@ let suite =
         let p2 = { actions = extractPlan n2 } in
         (* printState (execute p2 startState); *)
 
-        assert_equal (execute p2 startState) (execute p1 startState);
-        assert_equal (execute p2 startState) goalState;
+        assert_equal (string_of_state (execute p2 startState)) (string_of_state (execute p1 startState));
+        assert_equal (string_of_state (execute p2 startState)) (string_of_state goalState);
       );
   ]
 

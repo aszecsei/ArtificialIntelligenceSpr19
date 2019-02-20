@@ -460,7 +460,8 @@ type node = {
 let rec isInPath s n =
   match n with
   | None -> false
-  | Some {state = s'; parent = n'; _} -> s = s' || isInPath s n'
+  | Some {state = s'; parent = n'} -> 
+    (string_of_board s.board = string_of_board s'.board) || isInPath s n'
 
 (* 'expand' takes a heuristic function 'f' and a node 'n',
    generates all the successors of 'n' in the search tree,
@@ -518,7 +519,7 @@ let treeSearch initState f isGoal =
   search fringe
 
 (* specific implementatation of 'isGoal' that succeeds only for the 'goalState' given earlier *)
-let isMyGoal n = n.state = goalState
+let isMyGoal n = (string_of_board n.state.board = string_of_board goalState.board)
 
 (*-------------
    Problem A.4
