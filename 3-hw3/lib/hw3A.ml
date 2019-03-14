@@ -130,5 +130,12 @@ let areEquiv p1 p2 =
 
 (* 
 
+You could construct a variable for each statement. For example,
+
+let modusPonens = entails [(Impl (P 1) (P 2)); (P 1)] (P 2)
+
+If the entailment holds, then we've confirmed for any values of alpha (P 1) and beta (P 2), that
+if alpha implies beta and alpha is true, then beta is also true.
+
 *)
 
